@@ -1,13 +1,20 @@
-
-#include "GuaWindow.h"
-
-
-int main(int argc, const char * argv[]) {
-    int w = 800;
-    int h = 600;
-    const char *t = "Gua OpenGL";
-    
-    GuaWindow * window = GuaWindowNew(w, h, t);
-    GuaWindowRun(window);
-    return 0;
+#include <GLUT/GLUT.h>
+void display()
+ {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_POLYGON);
+        glVertex2f(-0.5, -0.5);
+        glVertex2f(-0.5, 0.5);
+        glVertex2f(0.5, 0.5);
+        glVertex2f(0.5, -0.5);
+    glEnd();
+    glFlush();
+}
+int main(int argc, char ** argv)
+{
+    glutInit(&argc, argv);
+    glutInitWindowSize(400, 400);
+    glutCreateWindow("zhongguo");
+    glutDisplayFunc(display);
+    glutMainLoop();
 }
