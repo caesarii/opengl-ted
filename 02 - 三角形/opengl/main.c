@@ -19,7 +19,7 @@ int main(int argc, char ** argv)
 {
     glutInit(&argc, argv);
     glutInitWindowSize(400, 400);
-    glutCreateWindow("zhongguo");
+    glutCreateWindow("opengl");
     glutDisplayFunc(display);
     glutMainLoop();
 }
