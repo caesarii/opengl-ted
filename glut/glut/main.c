@@ -8,11 +8,19 @@
 
 #include <glut/glut.h>
 
-# define drawOnePoint(x1, y1) glBegin(GL_POINTS); \
-    glVertex2f((x1), (y1)); glEnd();
+void
+drawOnePoint (float x1, float y1) {
+    glBegin(GL_POINTS);
+    glVertex2f((x1), (y1));
+    glEnd();
+}
 
-# define drawOneLine(x1, y1, x2, y2) glBegin(GL_LINES); \
-    glVertex2f((x1), (y1)); glVertex2f((x2), (y2)); glEnd();
+void
+drawOneLine (float x1, float y1, float x2, float y2) {
+    glBegin(GL_LINES);
+    glVertex2f((x1), (y1)); glVertex2f((x2), (y2));
+    glEnd();
+}
 
 void
 init(void) {
@@ -26,9 +34,11 @@ guaRender(void) {
     glColor3f(1.0, 1.0, 1.0);
     
     
-    glPointSize(100);
-   
-    drawOnePoint(200, 200);
+    glPointSize(10);
+    drawOnePoint(100, 100);
+    
+    glLineWidth(10);
+    drawOneLine(300, 300, 500, 300);
     
     glFlush();
 }
