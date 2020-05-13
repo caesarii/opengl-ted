@@ -66,7 +66,10 @@ static void
 _GuaWindowRender(GuaWindow *window) {
     glUseProgram(window->shader);
     glBindVertexArray(window->vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+//    glDrawArrays(GL_TRIANGLES, 0, 3);
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
@@ -75,20 +78,31 @@ _GuaWindowPrepareShader(GuaWindow *window) {
     window->shader = GuaShaderProgramCreate("shaders/base.vert", "shaders/base.frag");
 }
 
+
 static void
 _GuaWindowPrepareVertex(GuaWindow *window) {
     // 顶点坐标
     float vertices[] = {
-        -0.5, -0.5, 0.0,
-         0.5, -0.5, 0.0,
-         0.5,  0.5, 0.0
+        -0.5,  0.5, 0.0, 1.0, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
+         0.5, -0.5, 0.0, 1.0, 0.0, 1.0,
+         0.5,  0.5, 0.0, 1.0,  5.0, 0.0,
+         0.3,  0.1, 0.0, 1.0,  1.0, 0.0,
+    };
+    unsigned int indices[] = {
+        0, 1, 3,
+        3, 1, 2,
+        0, 1, 4,
+        4, 1, 2,
     };
 
-    // 顶点缓冲对象：Vertex Buffer Object，VBO
-    // 顶点数组对象：Vertex Array Object，VAO
-    unsigned int vbo, vao;
+    // 顶点缓冲对象 Vertex Buffer Object  VBO
+    // 顶点数组对象 Vertex Array Object   VAO
+    // 索引缓冲对象 Element Buffer Object EBO
+    unsigned int vbo, vao, ebo;
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
     // 绑定刚生成的 vao 和 vbo, 接下来的操作都针对被绑定的对象
     glBindVertexArray(vao);
@@ -96,19 +110,26 @@ _GuaWindowPrepareVertex(GuaWindow *window) {
     // 把顶点数据复制到缓冲的内存中
     // 用于把顶点信息存储在 GPU 内存中, 便于 GPU 快速访问
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+    
     // 设置顶点属性指针, 编号 值数量 值类型 是否归一化 步长 offset
     // 用于告诉 shader 该如何解析顶点数据
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // 顶点坐标
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), NULL);
     glEnableVertexAttribArray(0);
+    // 顶点颜色
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
+    // 把顶点索引存储到缓存中
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // 解除绑定
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     window->vao = vao;
 }
-
 void
 GuaWindowRun(GuaWindow *window) {
     _GuaWindowPrepareShader(window);
